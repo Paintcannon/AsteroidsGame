@@ -13,9 +13,10 @@ ArrayList<Integer> asteroidProximity = new ArrayList<Integer>();
 ArrayList<Bullet> bulletArray = new ArrayList<Bullet>();
 boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing;
 double dRadians;
-int radarTick, hyperspaceTick, hyperspaceX, hyperspaceY, hyperspaceRotation;
+int radarTick, hyperspaceTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives;
 public void setup() 
 {	
+	lives = 3;
 	ship.setX(500);
 	ship.setY(500);
 	size(1000,1000);
@@ -75,6 +76,10 @@ public void draw()
 			asteroids.get(i).show();
 			asteroids.get(i).move();
 			asteroidProximity.clear();
+		}
+		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < (13*asteroids.get(i).getScale())+32)
+		{
+			hit();
 		}
 		//println(filling);
 	}
@@ -166,10 +171,11 @@ public void hyperspace()
 
 public void asteroidHit(int asteroid)
 {
-	switch(asteroids.get(asteroid).getSize())
+	println("success");
+	println(asteroids.get(asteroid).getSize());
+	switch(asteroids.get(asteroid).getScale())
 	{
-		case 3:
-			println("success");
+		case 4:
 			asteroids.add(new Asteroid(2,asteroids.get(asteroid).getX(), asteroids.get(asteroid).getY()));
 			asteroids.get(asteroid).change(2);
 			break;
@@ -212,7 +218,6 @@ public void keyPressed()
 	}
 }
 
-
 public void keyReleased()
 {
 	if (key == 'a') {left = false;}
@@ -220,4 +225,14 @@ public void keyReleased()
 	if (key == 'w') {forward = false;}
 	if (key == 's') {backward = false;}
 	if (key == ' ') {firing = false;}
+}
+
+public void hit()
+{
+	shipDissapear = true;
+	lives = lives - 1;
+	if (lives == 0) 
+	{
+			//finish this shit.
+	}
 }

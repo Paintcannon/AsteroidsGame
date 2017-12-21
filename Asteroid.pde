@@ -36,7 +36,39 @@ class Asteroid extends Floater
 				break;
 		}
 		myRotationSpeed = (int)((Math.random()*7)-3);
-		int randomize = (int)(Math.random()*4);
+		randomizeAsteroid();
+    }
+    public void move()
+	{      
+	    turn(myRotationSpeed);
+	    super.move();
+  	}
+  	public void change(int newSize)
+  	{
+   		switch (newSize)
+		{
+			case 3:
+				setDirectionX((Math.random()*3)-1);
+				setDirectionY((Math.random()*3)-1);
+				scale = 4;
+				break;
+			case 2:
+				setDirectionX((Math.random()*5)-2);
+				setDirectionY((Math.random()*5)-2);
+				scale = 2;
+				break;
+			case 1:
+				setDirectionX((Math.random()*7)-3);
+				setDirectionY((Math.random()*7)-3);
+				scale = 1;
+				break;
+		}
+		randomizeAsteroid();
+  	}
+  	public void setColor(int filling) { myColor = filling; }
+  	public void randomizeAsteroid() 
+  	{
+  			int randomize = (int)(Math.random()*4);
 		if (randomize == 0)
 		{
     		corners = 10;
@@ -78,32 +110,5 @@ class Asteroid extends Floater
     		yCorners = yS;
     	}
     	mySize = 28 * scale;
-    }
-    public void move()
-	{      
-	    turn(myRotationSpeed);
-	    super.move();
-  	}
-  	public void change(int newSize)
-  	{
-   		switch (newSize)
-		{
-			case 3:
-				setDirectionX((Math.random()*3)-1);
-				setDirectionY((Math.random()*3)-1);
-				scale = 4;
-				break;
-			case 2:
-				setDirectionX((Math.random()*5)-2);
-				setDirectionY((Math.random()*5)-2);
-				scale = 2;
-				break;
-			case 1:
-				setDirectionX((Math.random()*7)-3);
-				setDirectionY((Math.random()*7)-3);
-				scale = 1;
-				break;
-		}
-  	}
-  	public void setColor(int filling) { myColor = filling; }
+	}
 }
