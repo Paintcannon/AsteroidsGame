@@ -8,7 +8,7 @@ class Hyperbeam
         myY = 0;
         tick = 0;
     }
-    public void show(int x, int y, float rotation)
+    public void show(int x, int y, float rotation, boolean continued)
     {
         tick += 1;
         //x and y are located at the center of the triangle base.
@@ -21,7 +21,7 @@ class Hyperbeam
         rotate(myRotation);
         fill(135,206,250);
         rect(-sqrt(sq(width)+sq(height)),-25,sqrt(sq(width)+sq(height))*2,50);
-        if (tick > 30)
+        if (tick > 30 || continued)
         {
             fill(255);
             rect(-sqrt(sq(width)+sq(height)),-20,sqrt(sq(width)+sq(height))*2,40);

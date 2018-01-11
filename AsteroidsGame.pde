@@ -11,9 +11,9 @@ ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
 ArrayList<Radar> radarArray = new ArrayList<Radar>();
 ArrayList<Integer> asteroidProximity = new ArrayList<Integer>();
 ArrayList<Bullet> bulletArray = new ArrayList<Bullet>();
-boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing;
+boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing, isHit, gameOver;
 double dRadians;
-int radarTick, hyperspaceTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives;
+int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives;
 public void setup() 
 {	
 	lives = 3;
@@ -26,11 +26,13 @@ public void setup()
 	right = false;
 	hyperspace = false;
 	hyperspaceTick = 0;
+	hitTick = 0;
 	radarTick = 0;
+	isHit = false;
 	shipDisappear = false;
 	starTrigger = false;
 	for (int i = 0; i < 200; i++) {starArray[i] = new Stars();}
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 4; i++) {
 		asteroids.add(new Asteroid(3,(int)(Math.random()*width),(int)(Math.random()*height)));
 		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < 70)
 		{
@@ -42,6 +44,7 @@ public void setup()
 
 public void draw() 
 {
+	textAlign(CENTER);
 	radarTick += 1;
 	background(0);
 	noStroke();
@@ -51,6 +54,7 @@ public void draw()
 	{
 		bulletArray.get(i).show();
 		bulletArray.get(i).move();
+		if (bulletArray.get(i).getDistance() > 750) {bulletArray.remove(i);}
 	}
 	if (radarTick % 180 == 0 && hyperspace == false) {radarArray.add(new Radar(ship.getX(),ship.getY()));}
 	for (int i = 0; i < radarArray.size(); i++)
@@ -77,11 +81,11 @@ public void draw()
 			asteroids.get(i).move();
 			asteroidProximity.clear();
 		}
-		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < (13*asteroids.get(i).getScale())+32)
+		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < (13*asteroids.get(i).getScale())+32 && isHit == false)
 		{
+			if (lives > 1) {asteroidHit(i);}
 			hit();
 		}
-		//println(filling);
 	}
 	for (int i = 0; i < bulletArray.size(); i++)
 	{
@@ -96,9 +100,9 @@ public void draw()
 		}
 	}
 	dRadians = ship.getPointDirection() * (Math.PI/180);
-	if (hyperspace == false)
+	if (hyperspace == false && shipDisappear == false)
 	{
-		if (shipDisappear == false) {ship.show();}
+		ship.show();
 		if (forward == true)
 		{
 			forward1.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
@@ -122,7 +126,13 @@ public void draw()
   		hyperspaceTick += 1;
   		if (hyperspaceTick <= 40) 
   		{
-  			beam.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+  			if (gameOver == false) {beam.show(ship.getX(), ship.getY(), (float)ship.getPointDirection(), false);}
+  			else
+  			{
+ 				fill(255, 0, 0);
+ 				textSize(100);
+  				text("GAME OVER",width/2,height/2);
+  			}
   			shipDisappear = true;
   		}
   		else if (hyperspaceTick > 60 && starTrigger == true)
@@ -135,26 +145,45 @@ public void draw()
   			ship.setX(hyperspaceX);
   			ship.setY(hyperspaceY);
   			ship.setPointDirection(hyperspaceRotation);
-  			beam.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+  			beam.show(ship.getX(), ship.getY(), (float)ship.getPointDirection(), gameOver);
   		}
   		else if (hyperspaceTick > 100) 
   		{
+  			if (gameOver == true)
+  			{
+  				lives = 3;
+  				gameOver = false;
+  			}
   			shipDisappear = false;
   			hyperspaceTick = 0;
   			beam.reset();
   			hyperspace = false;
-  			for (int i = 0; i < 6; i++) {
-		asteroids.add(new Asteroid(3,(int)(Math.random()*width),(int)(Math.random()*height)));
-		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < 70)
-		{
-			asteroids.get(i).setX((int)(Math.random()*width));
-			asteroids.get(i).setY((int)(Math.random()*height));
-		}
-	}
+  			for (int i = 0; i < 4; i++) 
+  			{
+				asteroids.add(new Asteroid(3,(int)(Math.random()*width),(int)(Math.random()*height)));
+				if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < 70)
+				{
+					asteroids.get(i).setX((int)(Math.random()*width));
+					asteroids.get(i).setY((int)(Math.random()*height));
+				}
+			}	
   		}
   	}
-  	//test.show(ship.getX()-24,ship.getY()-16,(float)ship.getPointDirection());
-  	//println(hyperspaceTick);
+  	if (isHit == true)
+  	{
+  		hitTick++;
+  		if (hitTick % 60 < 30 && hitTick < 180) {shipDisappear = true;}
+  		else if (hitTick % 60 >= 30) {shipDisappear = false;}
+  		else if (hitTick >= 180)
+  		{
+  			shipDisappear = false;
+  			hitTick = 0;
+  			isHit = false;
+  		}
+  	}
+  	textSize(50);
+  	fill(135,206,250);
+  	text("Lives: " + lives,100,50);
 }
 
 public void hyperspace()
@@ -171,8 +200,6 @@ public void hyperspace()
 
 public void asteroidHit(int asteroid)
 {
-	println("success");
-	println(asteroids.get(asteroid).getSize());
 	switch(asteroids.get(asteroid).getScale())
 	{
 		case 4:
@@ -229,10 +256,11 @@ public void keyReleased()
 
 public void hit()
 {
-	shipDissapear = true;
-	lives = lives - 1;
-	if (lives == 0) 
+	isHit = true;
+	lives--;
+	if (lives == 0)
 	{
-			//finish this shit.
+		gameOver = true;
+		hyperspace();
 	}
 }

@@ -11,8 +11,11 @@ class Bullet extends Floater
 	public void setPointDirection(int degrees) {myPointDirection = degrees;}   
 	public double getPointDirection() {return myPointDirection;}
 	private double myRadians;
+	private float myDistance;
+	public int getDistance() {return (int)myDistance;}
 	public Bullet(Spaceship theShip)
 	{
+		myDistance = 0;
 		myCenterX = theShip.getX();
 		myCenterY = theShip.getY();
 		myPointDirection = theShip.getPointDirection();
@@ -25,5 +28,10 @@ class Bullet extends Floater
 		noStroke();
 		fill(135,206,250);
 		ellipse((float)myCenterX,(float)myCenterY,7.0,7.0);
+	}
+	public void move()
+	{
+		super.move();
+		myDistance = myDistance + sqrt(sq((float)myDirectionX) +  sq((float)myDirectionY));
 	}
 }
