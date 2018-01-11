@@ -24,7 +24,7 @@ public void setup()
 	backward = false;
 	left = false;
 	right = false;
-	hyperspace = false;
+	hyperspaceOn = false;
 	hyperspaceTick = 0;
 	hitTick = 0;
 	radarTick = 0;
@@ -56,7 +56,7 @@ public void draw()
 		bulletArray.get(i).move();
 		if (bulletArray.get(i).getDistance() > 750) {bulletArray.remove(i);}
 	}
-	if (radarTick % 180 == 0 && hyperspace == false) {radarArray.add(new Radar(ship.getX(),ship.getY()));}
+	if (radarTick % 180 == 0 && hyperspaceOn == false) {radarArray.add(new Radar(ship.getX(),ship.getY()));}
 	for (int i = 0; i < radarArray.size(); i++)
 	{
 		if (radarArray.get(i).getSize() > (sqrt((sq(height)+sq(width)))) * 2) {radarArray.remove(i);}
@@ -100,7 +100,7 @@ public void draw()
 		}
 	}
 	dRadians = ship.getPointDirection() * (Math.PI/180);
-	if (hyperspace == false && shipDisappear == false)
+	if (hyperspaceOn == false && shipDisappear == false)
 	{
 		ship.show();
 		if (forward == true)
@@ -117,7 +117,7 @@ public void draw()
 		if (right == true) {righting.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());}
 	}
   	ship.move();
-  	if (hyperspace == true)
+  	if (hyperspaceOn == true)
   	{
   		radarTick = 1;
   		ship.setDirectionX(0);
@@ -157,7 +157,7 @@ public void draw()
   			shipDisappear = false;
   			hyperspaceTick = 0;
   			beam.reset();
-  			hyperspace = false;
+  			hyperspaceOn = false;
   			for (int i = 0; i < 4; i++) 
   			{
 				asteroids.add(new Asteroid(3,(int)(Math.random()*width),(int)(Math.random()*height)));
@@ -169,6 +169,8 @@ public void draw()
 			}	
   		}
   	}
+  	//test.show(ship.getX()-24,ship.getY()-16,(float)ship.getPointDirection());
+  	//println(hyperspaceTick);
   	if (isHit == true)
   	{
   		hitTick++;
@@ -192,7 +194,7 @@ public void hyperspace()
   	radarArray.clear();
   	bulletArray.clear();
 	starTrigger = true;
-	hyperspace = true;
+	hyperspaceOn = true;
 	hyperspaceX = (int)(Math.random() * (width-46)+23);
 	hyperspaceY = (int)(Math.random() * (height-46)+23);
 	hyperspaceRotation = (int)(Math.random() * 360);
@@ -217,28 +219,29 @@ public void asteroidHit(int asteroid)
 }
 public void keyPressed()
 {
-	if (key == 'a' && hyperspace == false)
+	if (key == 'a' && hyperspaceOn == false)
 	{
 		ship.turn(-10);
 		left = true;
 	}
-	if (key == 'd' && hyperspace == false)
+	if (key == 'd' && hyperspaceOn == false)
 	{
 		ship.turn(10);
 		right = true;
 	}
-	if (key == 'w' && hyperspace == false)
+	if (key == 'w' && hyperspaceOn == false)
 	{
 		ship.accelerate(0.2);
 		forward = true;
 	}
-	if (key == 's' && hyperspace == false)
+	if (key == 's' && hyperspaceOn == false)
 	{
 		ship.accelerate(-0.2);
 		backward = true;
 	}
-	if (key == 'q' && hyperspace == false) {hyperspace();}
-	if (key == ' ' && hyperspace == false && firing == false) 
+	if (key == 'q' && hyperspaceOn == false) {hyperspace();}
+
+	if (key == ' ' && hyperspaceOn == false && firing == false) 
 	{
 		bulletArray.add(new Bullet(ship));
 		firing = true;
