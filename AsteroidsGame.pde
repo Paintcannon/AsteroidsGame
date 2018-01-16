@@ -11,7 +11,7 @@ ArrayList<Asteroid> asteroids = new ArrayList<Asteroid>();
 ArrayList<Radar> radarArray = new ArrayList<Radar>();
 ArrayList<Integer> asteroidProximity = new ArrayList<Integer>();
 ArrayList<Bullet> bulletArray = new ArrayList<Bullet>();
-boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing, isHit, gameOver;
+boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing, isHit, gameOver, hyperspaceOn;
 double dRadians;
 int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives;
 public void setup() 
