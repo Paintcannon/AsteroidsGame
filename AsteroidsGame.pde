@@ -188,7 +188,7 @@ public void draw()
   	text("Lives: " + lives,100,50);
 }
 
-public void hyperspace()
+public void hyperspaceFunction()
 {
 	asteroids.clear();
   	radarArray.clear();
@@ -239,7 +239,7 @@ public void keyPressed()
 		ship.accelerate(-0.2);
 		backward = true;
 	}
-	if (key == 'q' && hyperspaceOn == false) {hyperspace();}
+	if (key == 'q' && hyperspaceOn == false) {hyperspaceFunction();}
 
 	if (key == ' ' && hyperspaceOn == false && firing == false) 
 	{
@@ -264,6 +264,6 @@ public void hit()
 	if (lives == 0)
 	{
 		gameOver = true;
-		hyperspace();
+		hyperspaceFunction();
 	}
 }
