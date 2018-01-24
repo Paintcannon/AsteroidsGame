@@ -13,9 +13,11 @@ ArrayList<Integer> asteroidProximity = new ArrayList<Integer>();
 ArrayList<Bullet> bulletArray = new ArrayList<Bullet>();
 boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing, isHit, gameOver, hyperspaceOn;
 double dRadians;
-int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives;
+int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives, score, scoreThisRound;
 public void setup() 
 {	
+	score = 0;
+	scoreThisRound = 0;
 	lives = 3;
 	ship.setX(500);
 	ship.setY(500);
@@ -44,7 +46,6 @@ public void setup()
 
 public void draw() 
 {
-	textAlign(CENTER);
 	radarTick += 1;
 	background(0);
 	noStroke();
@@ -83,7 +84,7 @@ public void draw()
 		}
 		if (sqrt(sq(asteroids.get(i).getY()-ship.getY())+sq(asteroids.get(i).getX()-ship.getX())) < (13*asteroids.get(i).getScale())+32 && isHit == false)
 		{
-			if (lives > 1) {asteroidHit(i);}
+			if (lives > 1) {asteroidHit(i, false);}
 			hit();
 		}
 	}
@@ -94,7 +95,7 @@ public void draw()
 			if (sqrt(sq(asteroids.get(v).getY()-bulletArray.get(i).getY())+sq(asteroids.get(v).getX()-bulletArray.get(i).getX())) < 13*asteroids.get(v).getScale())
 			{
 				bulletArray.remove(i);
-				asteroidHit(v);
+				asteroidHit(v, true);
 				break;
 			}
 		}
@@ -107,14 +108,24 @@ public void draw()
 		{
 			forward1.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
 			forward2.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+			ship.accelerate(0.2);
 		}
 		if (backward == true)
 		{
 			backing1.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
 			backing2.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+			ship.accelerate(-0.2);
 		}
-		if (left == true) {lefting.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());}
-		if (right == true) {righting.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());}
+		if (left == true) 
+		{
+			lefting.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+			ship.turn(-5);
+		}
+		if (right == true) 
+		{
+			righting.show(ship.getX(), ship.getY(), (float)ship.getPointDirection());
+			ship.turn(5);
+		}
 	}
   	ship.move();
   	if (hyperspaceOn == true)
@@ -129,6 +140,7 @@ public void draw()
   			if (gameOver == false) {beam.show(ship.getX(), ship.getY(), (float)ship.getPointDirection(), false);}
   			else
   			{
+  				textAlign(CENTER);
  				fill(255, 0, 0);
  				textSize(100);
   				text("GAME OVER",width/2,height/2);
@@ -183,9 +195,13 @@ public void draw()
   			isHit = false;
   		}
   	}
+  	textAlign(LEFT);
   	textSize(50);
   	fill(135,206,250);
-  	text("Lives: " + lives,100,50);
+  	text("Lives: " + lives,10,50);
+  	textAlign(RIGHT);
+  	fill(255);
+  	text(score,width - 10,50);
 }
 
 public void hyperspaceFunction()
@@ -200,20 +216,35 @@ public void hyperspaceFunction()
 	hyperspaceRotation = (int)(Math.random() * 360);
 }
 
-public void asteroidHit(int asteroid)
+public void asteroidHit(int asteroid, boolean isScored)
 {
 	switch(asteroids.get(asteroid).getScale())
 	{
 		case 4:
 			asteroids.add(new Asteroid(2,asteroids.get(asteroid).getX(), asteroids.get(asteroid).getY()));
 			asteroids.get(asteroid).change(2);
+			if (isScored) 
+			{
+				score += 20;
+				scoreThisRound += 20;
+			}
 			break;
 		case 2:
 			asteroids.add(new Asteroid(1,asteroids.get(asteroid).getX(), asteroids.get(asteroid).getY()));
 			asteroids.get(asteroid).change(1);
+			if (isScored) 
+			{
+				score += 50;
+				scoreThisRound += 50;
+			}
 			break;
 		case 1:
 			asteroids.remove(asteroid);
+			if (isScored) 
+			{
+				score += 100;
+				scoreThisRound += 100;
+			}
 			break;
 	}
 }
@@ -221,26 +252,29 @@ public void keyPressed()
 {
 	if (key == 'a' && hyperspaceOn == false)
 	{
-		ship.turn(-10);
 		left = true;
 	}
 	if (key == 'd' && hyperspaceOn == false)
 	{
-		ship.turn(10);
 		right = true;
 	}
 	if (key == 'w' && hyperspaceOn == false)
 	{
-		ship.accelerate(0.2);
 		forward = true;
 	}
 	if (key == 's' && hyperspaceOn == false)
 	{
-		ship.accelerate(-0.2);
 		backward = true;
 	}
-	if (key == 'q' && hyperspaceOn == false) {hyperspaceFunction();}
-
+	if (key == 'q' && hyperspaceOn == false) 
+	{
+		if (asteroids.size() == 0) 
+		{
+			score += scoreThisRound;
+			scoreThisRound = 0;
+		}
+		hyperspaceFunction();
+	}
 	if (key == ' ' && hyperspaceOn == false && firing == false) 
 	{
 		bulletArray.add(new Bullet(ship));
@@ -264,6 +298,8 @@ public void hit()
 	if (lives == 0)
 	{
 		gameOver = true;
+		score = 0;
+		scoreThisRound = 0;
 		hyperspaceFunction();
 	}
 }
