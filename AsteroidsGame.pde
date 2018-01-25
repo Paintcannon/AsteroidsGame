@@ -13,11 +13,12 @@ ArrayList<Integer> asteroidProximity = new ArrayList<Integer>();
 ArrayList<Bullet> bulletArray = new ArrayList<Bullet>();
 boolean forward, backward, left, right, hyperspace, shipDisappear, starTrigger, firing, isHit, gameOver, hyperspaceOn;
 double dRadians;
-int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives, score, scoreThisRound;
+int radarTick, hyperspaceTick, hitTick, hyperspaceX, hyperspaceY, hyperspaceRotation, lives, score, scoreThisRound, round;
 public void setup() 
 {	
 	score = 0;
 	scoreThisRound = 0;
+	round = 0;
 	lives = 3;
 	ship.setX(500);
 	ship.setY(500);
@@ -50,6 +51,13 @@ public void draw()
 	background(0);
 	noStroke();
 	for (int i = 0; i < 200; i++) {starArray[i].show();}
+	if (asteroids.size() == 0 && round == 0 && hyperspaceOn == false)
+  	{
+  		textAlign(CENTER);
+  		textSize(80);
+  		fill(138,43,226);
+  		text("Press Q for hyperspace",width/2,height/2);
+  	}
 	for (int i = 0; i < radarArray.size(); i++) {radarArray.get(i).show();}
 	for (int i = 0; i < bulletArray.size(); i++) 
 	{
@@ -271,6 +279,7 @@ public void keyPressed()
 		if (asteroids.size() == 0) 
 		{
 			score += scoreThisRound;
+			round += 1;
 			scoreThisRound = 0;
 		}
 		hyperspaceFunction();
@@ -298,6 +307,7 @@ public void hit()
 	if (lives == 0)
 	{
 		gameOver = true;
+		round = 0;
 		score = 0;
 		scoreThisRound = 0;
 		hyperspaceFunction();
